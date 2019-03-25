@@ -1,6 +1,6 @@
 # Projet B11
 
-Répertoire contenant les développement de l'équipe B11.
+Répertoire contenant les développements de l'équipe B11.
 
 ## import_databases
 
