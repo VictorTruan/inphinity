@@ -64,9 +64,9 @@ class RESTDomainInteraction:
     def find_new_domain(self, set_interaction):
         # TODO voir comment on compte insert pour crée le bon format du json
         for interact in set_interaction:
-                if interact.first_dom not in self.domain_dict and interact.second_dom not in self.new_domain:
+                if interact.first_dom not in self.domain_dict.values() and interact.second_dom not in self.new_domain:
                     self.new_domain.update({interact.first_dom})
-                if interact.second_dom not in self.domain_dict and interact.second_dom not in self.new_domain:
+                if interact.second_dom not in self.domain_dict.values() and interact.second_dom not in self.new_domain:
                     self.new_domain.update({interact.second_dom})
 
     "Function used to insert all new Pfam to the database"
@@ -90,5 +90,5 @@ class RESTDomainInteraction:
     def new_interaction_to_json(self, set_interaction):
         interactions_list = list()
         for interact in set_interaction:
-            interactions_list.append({"PfamA": interact.first_dom, "PfamB": interact.second_dom})
+            interactions_list.append({"domain_a": interact.first_dom, "domain_b": interact.second_dom})
         print(json.dumps(interactions_list))
