@@ -28,7 +28,7 @@ import sys
 # Dans un second temps
 # TODO Si differente
     # TODO Trouver les diff et les inserer avec REST
-        #TODO utiliser les set
+     ##--> Diff trouvée
     # TODO Passer toutes les prot a HMM
     # TODO Trier tous les domaine de REST et HMM afin de trouver les nouveaux et les inserers
     # TODO Lancer les nouveaux calcules de scores.
@@ -130,13 +130,12 @@ inphi = RESTDomainInteraction()
 inphi.get_domain_dict()
 inphi.get_domain_inter()
 tmp = pfam.domain_interactions - inphi.domain_interactions
-print(str(len(pfam.domain_interactions)) + " interactions in pfam database")
-print(str(len(inphi.domain_interactions))+ " interactions in inph database")
-print(str(len(tmp)) + " interactions in pfam database but not in inph")
-
+inphi.find_new_domain(tmp)
+inphi.new_domain_to_json()
+inphi.new_interaction_to_json(tmp)
 for interaction in pfam.domain_interactions:
     if interaction not in inphi.domain_interactions:
         pass
-#TODO Insert if missing, move this code to a function
+# TODO Insert if missing, move this code to a function
     else:
         pass
