@@ -14,9 +14,10 @@ class DomainInteraction:
     Redefine equals so we can compare each domain-domain interaction easily.
     """
     def __eq__(self, obj):
-        return isinstance(obj, DomainInteraction) and self.first_dom == obj.first_dom and \
-               self.second_dom == obj.second_dom
-
+        return isinstance(obj, DomainInteraction) and ((self.first_dom == obj.first_dom and
+                                                        self.second_dom == obj.second_dom) or
+                                                       (self.first_dom == obj.second_dom and
+                                                        self.second_dom == obj.first_dom))
     """
     Override of str 
     """
