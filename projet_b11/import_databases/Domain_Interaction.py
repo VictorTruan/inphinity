@@ -28,4 +28,6 @@ class DomainInteraction:
     To redefine Hash, we are concatenate the two domain  and hash the result string.
     """
     def __hash__(self):
-        return hash(self.first_dom + self.second_dom)
+        if self.first_dom == self.second_dom:
+            return hash(self.first_dom)
+        return hash(self.first_dom) ^ hash(self.second_dom)
