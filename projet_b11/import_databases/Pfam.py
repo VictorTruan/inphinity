@@ -130,12 +130,5 @@ inphi = RESTDomainInteraction()
 inphi.get_domain_dict()
 inphi.get_domain_inter()
 tmp = pfam.domain_interactions - inphi.domain_interactions
-inphi.find_new_domain(tmp)
-inphi.new_domain_to_json()
-inphi.new_interaction_to_json(tmp)
-for interaction in pfam.domain_interactions:
-    if interaction not in inphi.domain_interactions:
-        pass
-# TODO Insert if missing, move this code to a function
-    else:
-        pass
+print(tmp)
+inphi.update_inphinity_database(tmp, "iPfam")
