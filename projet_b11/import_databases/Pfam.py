@@ -129,6 +129,4 @@ pfam.get_interactions()
 inphi = RESTDomainInteraction()
 inphi.get_domain_dict()
 inphi.get_domain_inter()
-tmp = pfam.domain_interactions - inphi.domain_interactions
-print(tmp)
-inphi.update_inphinity_database(tmp, "iPfam")
+inphi.get_inter_source()

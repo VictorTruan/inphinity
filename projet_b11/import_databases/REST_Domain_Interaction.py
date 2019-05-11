@@ -10,12 +10,14 @@ import datetime
 Date: le 24/04/19
 
 """
+#TODO separer l'insert d'interaction et l'insert d'interaction par bd
+#TODO -> Si on la trouve pas AVEC SOURCE on regarde si on la trouve SANS SOURCE
+#TODO -> Si on la trouve sans source on l'insert dans les sources
+#TODO -> Si on la trouve pas sans les sources on l'insert dans les non-source et les sources.
 
 # https://www.tutorialspoint.com/python/python_dictionary.htm
 # https://www.journaldev.com/23232/python-add-to-dictionary
 # For the uses of dictionary
-
-# TODO ajouter le systeme de source de db (Dans le JSON?)
 
 
 """
@@ -27,13 +29,16 @@ This class is used to represent domain-domain interaction and a dictionary of al
 class RESTDomainInteraction:
 
     def __init__(self):
-        self.domain_dict = {}
-        self.reverse_dict_domain = {}
-        self.domain_interactions = set()
+        self.domain_dict = dict()  # Dictionnary from id to Pfam
+        self.reverse_dict_domain = {}  # Dictionnary from Pfam to id
+        self.source_dict = dict()  # Dictionnary Source String to source id
+        self.interact_dict = dict()  # Dictionnary from a pair and interact id
+        self.interact_dict_reverse = dict()  # Dictionnary from a pair and interact id
+        self.domain_interactions = set()  # Set of all interactions
+        self.domain_interactions_source = list()  # Set of all interactions with source
         self.conf = ConfigurationAPI()
         self.conf.load_data_from_ini()
-        self.new_domain = set()
-        self.source_dict = {}
+        self.new_domain = set()  # Set for all the new domain we need to insert
         AuthenticationAPI().createAutenthicationToken()
 
     """
@@ -55,8 +60,17 @@ class RESTDomainInteraction:
             # Creation of the new interaction
             domain_a = self.domain_dict.get(interaction['domain_a'])
             domain_b = self.domain_dict.get(interaction['domain_b'])
-            self.domain_interactions.add(DomainInteraction(domain_a, domain_b))
+            tmp = DomainInteraction(domain_a, domain_b)
+            self.domain_interactions.add(tmp)
+            self.interact_dict.update({interaction['id']: tmp})
+            self.interact_dict_reverse.update({tmp: interaction['id']})
 
+    def get_inter_source(self):
+        p = DomainInteractionSourceAPI()
+        interactions = p.get_all()
+        for interaction in interactions:
+            interact = self.interact_dict_reverse.get(interaction['domain_interaction'])
+            self.domain_interactions_source.append({interact, interaction['information_source']})
     """
     Function used to find if all Pfam in a set are present in the inphinity database.
     
@@ -66,7 +80,6 @@ class RESTDomainInteraction:
     
     
     """
-
     def find_new_domain(self, set_interaction):
         for interact in set_interaction:
                 if interact.first_dom not in self.domain_dict.values() and interact.second_dom not in self.new_domain:
@@ -109,8 +122,8 @@ class RESTDomainInteraction:
         for interact in interact_data:
             interact_id = DomainInteractionPairAPI().setDomainInteractionPair(interact)
             DomainInteractionSourceAPI().setDomainInteractionSource({"date_creation": datetime.date.today()
-                                                                    ,"domain_interaction": interact_id
-                                                                    ,"source": self.source_dict.get(source)})
+                                                                    , "domain_interaction": interact_id
+                                                                    , "source": self.source_dict.get(source)})
 
     """
     Function used to update the inphinity database. It use one set of interaction and one source.
@@ -124,9 +137,10 @@ class RESTDomainInteraction:
     :type source: String - required
     """
     def update_inphinity_database(self, set_interaction, source):
-        self.find_new_domain(set_interaction)
-        self.insert_new_domain()
-        self.insert_new_interaction(self.new_interaction_to_data(set_interaction), source)
+        #TODO Faire appel a toutes les autres méthodes pour que on puisse utiliser que celle la depuis un nouveau set.
+
+        #TODO Pour le moment on n'a que insert_new_ineraction qui fait l'insert SI l'ineract est nul part, il faut gérer les cas
+        #TODO Ou l'interaction et deja présente mais pas dans la table avec la source pour laquelle on recherche.
 
     """
     Function used during the update to put the new domains in the inphinity database.
